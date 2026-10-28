@@ -154,15 +154,73 @@ footer{color:var(--muted);font-size:12px;padding:8px 2px 20px}
 .pdf-footer{margin-top:16px;border-top:3px solid #174c83;padding-top:12px;break-inside:avoid;font-size:12px}
 .pdf-footer .signature{margin:36px auto 0;width:65%;text-align:center;border-top:1px solid #263b52;padding-top:5px}
 @media print{.pdf-selected,.pdf-meta,.pdf-result,.pdf-head,.pdf-section-title,.pdf-subtitle{print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important}}
+
+/* Home e seleção de instrumentos */
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#f2f6f7}
+.header{background:linear-gradient(115deg,#0b3345,#13566a 65%,#187b76);border-radius:18px;padding:29px}
+.header h1{font-size:clamp(24px,3vw,32px)}
+.home-intro{padding:22px 2px 24px}
+.eyebrow{font-size:11px;letter-spacing:2px;color:#13746d;font-weight:800}
+.home-intro h2{font-size:clamp(25px,3vw,35px);letter-spacing:-.7px;margin:10px 0;color:#153949}
+.home-intro p{color:#647782;margin:0}
+.home-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+.instrument-card{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:#fff;color:#163c4b;border:1px solid #dbe7e9;border-radius:18px;padding:25px;min-height:300px;box-shadow:0 7px 24px #163c4b0c;transition:transform .15s,box-shadow .15s}
+.instrument-card:hover,.instrument-card:focus-visible{transform:translateY(-3px);box-shadow:0 13px 30px #163c4b20;border-color:#83b5ae}
+.instrument-icon{display:grid;place-items:center;width:51px;height:51px;border-radius:14px;background:#e1f2ed;color:#126b5f;font-size:18px;margin-bottom:22px}
+.instrument-card:nth-child(2) .instrument-icon{background:#e8effa;color:#305d96}
+.instrument-card:nth-child(3) .instrument-icon{background:#efecf9;color:#64539a}
+.instrument-tag{font-size:10px;letter-spacing:1.2px;color:#72818a}
+.instrument-card strong{font-size:29px;margin:7px 0}
+.instrument-desc{font-size:14px;font-weight:400;line-height:1.6;color:#647782}
+.instrument-action{font-size:14px;color:#12776c;margin-top:auto;padding-top:20px}
+.workspace-nav{display:flex;align-items:center;gap:15px;margin-bottom:15px;color:#13566a}
+.option:has(input:checked){background:#e9f5f2;border-color:#8cbeb5}
+@media(max-width:800px){.home-grid{grid-template-columns:1fr}.instrument-card{min-height:205px}.instrument-icon{margin-bottom:12px}.header{padding:22px}}
+@media print{#homeView,.workspace-nav{display:none!important}}
+
+/* v4: relatório só existe visualmente durante impressão / salvar PDF */
+#printArea{display:none!important}
+@page{size:A4 portrait;margin:16mm 15mm 17mm}
+@media print{
+ html,body{margin:0!important;padding:0!important;width:auto!important;overflow:visible!important;background:#fff!important}
+ body{font-family:Arial,Helvetica,sans-serif!important;font-size:10pt}
+ .app{display:block!important;width:auto!important;max-width:none!important;margin:0!important;padding:0!important;overflow:visible!important}
+ .app > :not(#printArea){display:none!important}
+ #printArea{display:block!important;position:static!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;box-sizing:border-box!important}
+ #printArea *{box-sizing:border-box!important;max-width:100%;overflow-wrap:anywhere}
+ #printArea .pdf-head{padding:10px 12px!important;margin:0 0 10px!important;border-radius:0!important}
+ #printArea .pdf-head h2{font-size:16px!important;line-height:1.3}
+ #printArea .pdf-meta{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:6px 12px!important;padding:9px!important;font-size:10px!important;min-width:0}
+ #printArea .pdf-section{overflow:visible!important;border-radius:0!important;break-inside:auto!important;margin:0 0 9px!important}
+ #printArea .pdf-section-title{break-after:avoid!important;page-break-after:avoid!important}
+ #printArea .pdf-instruction{font-size:10px!important;line-height:1.35}
+ #printArea .pdf-option{grid-template-columns:20px minmax(0,1fr) auto!important;font-size:9.5px!important;line-height:1.35!important;padding:5px 7px!important;break-inside:avoid!important;page-break-inside:avoid!important}
+ #printArea .pdf-option > *{min-width:0}
+ #printArea .pdf-result,#printArea .pdf-footer,#printArea .pdf-head,#printArea .pdf-meta{break-inside:avoid!important;page-break-inside:avoid!important}
+ #printArea .pdf-result-row{font-size:10px!important;flex-wrap:wrap}
+ #printArea .pdf-footer{font-size:10px!important}
+ #printArea .pdf-selected{background:#e5f1ff!important}
+ #printArea .pdf-section-title,#printArea .pdf-subtitle,#printArea .pdf-head,#printArea .pdf-meta,#printArea .pdf-selected{print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important}
+}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="header">
     <h1>Instrumentos de Avaliação Clínica</h1>
-    <p>Versão HTML preenchível, com cálculo automático, relatório final, download em PDF e impressão.</p>
+    <p>Avaliação clínica e planejamento do cuidado</p>
   </div>
 
+<section id="homeView" class="no-print">
+  <div class="home-intro"><span class="eyebrow">INSTRUMENTOS CLÍNICOS</span><h2>Qual instrumento deseja aplicar?</h2><p>Selecione uma avaliação para iniciar o preenchimento.</p></div>
+  <div class="home-grid">
+    <button type="button" class="instrument-card" data-open="iaec"><span class="instrument-icon">01</span><span class="instrument-tag">ATENÇÃO DOMICILIAR</span><strong>IAEC-AD</strong><span class="instrument-desc">Instrumento de Avaliação da Elegibilidade e Complexidade da Atenção Domiciliar.</span><span class="instrument-action">Iniciar avaliação →</span></button>
+    <button type="button" class="instrument-card" data-open="spict"><span class="instrument-icon">02</span><span class="instrument-tag">CUIDADOS PALIATIVOS</span><strong>SPICT-BR</strong><span class="instrument-desc">Identificação de indicadores de necessidades de suporte e cuidados paliativos.</span><span class="instrument-action">Iniciar avaliação →</span></button>
+    <button type="button" class="instrument-card" data-open="pps"><span class="instrument-icon">03</span><span class="instrument-tag">DESEMPENHO FUNCIONAL</span><strong>PPS</strong><span class="instrument-desc">Escala de Desempenho em Cuidados Paliativos — EDCP versão 2.</span><span class="instrument-action">Iniciar avaliação →</span></button>
+  </div>
+</section>
+<div id="assessmentWorkspace" class="hidden">
+<div class="workspace-nav no-print"><button id="backHome" class="secondary" type="button">← Página inicial</button><strong id="currentInstrument"></strong></div>
   <div class="card no-print">
     <div class="grid">
       <label class="field">Nome do paciente
@@ -287,9 +345,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 2px 20px}
       <p id="iaecOpinion"></p>
       <p><strong>AD1</strong> Até 09 pontos<br><strong>AD2</strong> De 10 a 15 pontos<br><strong>AD3</strong> Maior ou igual a 16 pontos</p>
       <div class="actions no-print">
-        <button id="previewIAEC" class="secondary" type="button">Atualizar relatório</button>
-        <button id="pdfIAEC" class="primary" type="button">Gerar PDF (formulário completo)</button>
-        <button id="printIAEC" class="secondary" type="button">Imprimir</button>
+        <button id="pdfIAEC" class="primary" type="button">Gerar PDF / Imprimir</button>
         <button id="clearIAEC" class="danger" type="button">Limpar IAEC-AD</button>
       </div>
     </div>
@@ -366,9 +422,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 2px 20px}
       <p id="spictOpinion"></p>
       <div class="notice">O SPICT-BR apresentado não possui sistema de pontuação numérica. As contagens exibidas correspondem apenas ao número de indicadores selecionados e não constituem um escore.</div>
       <div class="actions no-print">
-        <button id="previewSPICT" class="secondary" type="button">Atualizar relatório</button>
-        <button id="pdfSPICT" class="primary" type="button">Gerar PDF (formulário completo)</button>
-        <button id="printSPICT" class="secondary" type="button">Imprimir</button>
+        <button id="pdfSPICT" class="primary" type="button">Gerar PDF / Imprimir</button>
         <button id="clearSPICT" class="danger" type="button">Limpar SPICT-BR</button>
       </div>
     </div>
@@ -453,20 +507,19 @@ footer{color:var(--muted);font-size:12px;padding:8px 2px 20px}
         O resultado corresponde à linha selecionada como aquela que melhor descreve, como um todo, a condição atual do paciente. O instrumento deve ser utilizado em incrementos de 10%.
       </div>
       <div class="actions no-print">
-        <button id="previewPPS" class="secondary" type="button">Atualizar relatório</button>
-        <button id="pdfPPS" class="primary" type="button">Gerar PDF (formulário completo)</button>
-        <button id="printPPS" class="secondary" type="button">Imprimir</button>
+        <button id="pdfPPS" class="primary" type="button">Gerar PDF / Imprimir</button>
         <button id="clearPPS" class="danger" type="button">Limpar PPS</button>
       </div>
     </div>
   </div>
 
-  <div id="printArea" class="report-preview">
+  </div><!-- assessmentWorkspace -->
+  <div id="printArea" class="report-preview" aria-hidden="true">
     <h2>Relatório final</h2>
     <p class="small">O relatório será atualizado ao clicar em “Atualizar relatório”, “Gerar PDF” ou “Imprimir”.</p>
   </div>
 
-  <footer>Arquivo autônomo. Os botões “Gerar PDF” e “Imprimir” abrem a versão A4 do próprio formulário, com todas as opções e as seleções realizadas.</footer>
+  <footer>Instrumentos de avaliação clínica • O relatório é preparado apenas ao selecionar “Gerar PDF / Imprimir”.</footer>
 </div>
 
 <script>
@@ -498,6 +551,19 @@ function switchTab(which){
 $('#tabIAEC').addEventListener('click',()=>switchTab('iaec'));
 $('#tabSPICT').addEventListener('click',()=>switchTab('spict'));
 $('#tabPPS').addEventListener('click',()=>switchTab('pps'));
+function openAssessment(which){
+  $('#homeView').classList.add('hidden');
+  $('#assessmentWorkspace').classList.remove('hidden');
+  switchTab(which);
+  $('#currentInstrument').textContent=which==='iaec'?'IAEC-AD':which==='spict'?'SPICT-BR':'PPS';
+  window.scrollTo(0,0);
+}
+$$('[data-open]').forEach(b=>b.addEventListener('click',()=>openAssessment(b.dataset.open)));
+$('#backHome').addEventListener('click',()=>{
+  $('#assessmentWorkspace').classList.add('hidden');
+  $('#homeView').classList.remove('hidden');
+  window.scrollTo(0,0);
+});
 
 const none = $('#iaecNone');
 $$('.iaec-ind').forEach(el => el.addEventListener('change', () => {
@@ -776,10 +842,6 @@ function prepareReplica(kind){
   area.innerHTML=(kind==='iaec'?iaecReplica():(kind==='spict'?spictReplica():ppsReplica()))+professionalFooter();
   return area.innerHTML;
 }
-function printReplica(kind){
-  prepareReplica(kind);
-  setTimeout(()=>window.print(),80);
-}
 function generatePDF(kind){
   /* Browsers do not expose a secure cross-platform API to silently save a local PDF.
      The print dialog is the native PDF generator and preserves the full form layout. */
@@ -791,32 +853,26 @@ function generatePDF(kind){
     setTimeout(()=>{document.title=oldTitle;},500);
   },80);
 }
-$('#previewIAEC').addEventListener('click',()=>prepareReplica('iaec'));
-$('#previewSPICT').addEventListener('click',()=>prepareReplica('spict'));
 $('#pdfIAEC').addEventListener('click',()=>generatePDF('iaec'));
 $('#pdfSPICT').addEventListener('click',()=>generatePDF('spict'));
-$('#printIAEC').addEventListener('click',()=>printReplica('iaec'));
-$('#printSPICT').addEventListener('click',()=>printReplica('spict'));
 
 
-$('#previewPPS').addEventListener('click',()=>prepareReplica('pps'));
 $('#pdfPPS').addEventListener('click',()=>generatePDF('pps'));
-$('#printPPS').addEventListener('click',()=>printReplica('pps'));
 $('#clearPPS').addEventListener('click',()=>{
   $$('#ppsForm input').forEach(x=>x.checked=false);
-  updatePPS();prepareReplica('pps');
+  updatePPS();
 });
 
 $('#clearIAEC').addEventListener('click',()=>{
   $$('#iaecForm input').forEach(x=>x.checked=false);
-  setFunctionalMode();updateIAEC();prepareReplica('iaec');
+  setFunctionalMode();updateIAEC();
 });
 $('#clearSPICT').addEventListener('click',()=>{
   $$('#spictForm input').forEach(x=>x.checked=false);
-  updateSPICT();prepareReplica('spict');
+  updateSPICT();
 });
 
-setFunctionalMode();updateIAEC();updateSPICT();updatePPS();prepareReplica('iaec');
+setFunctionalMode();updateIAEC();updateSPICT();updatePPS();
 })();
 </script>
 </body>
