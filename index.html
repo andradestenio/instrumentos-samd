@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IAEC-AD, SPICT-BR e PPS - Instrumentos Interativos</title>
+<style>
+:root{
+  --navy:#123b63;--blue:#1769aa;--light:#eef5fa;--border:#c8d6e2;--text:#17202a;
+  --green:#0d6b4f;--red:#9a2c2c;--white:#fff;--muted:#5f6f7e;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7f9;color:var(--text);line-height:1.42}
+.app{max-width:1150px;margin:0 auto;padding:22px}
+.header{background:var(--navy);color:white;border-radius:16px;padding:22px;margin-bottom:18px}
+.header h1{font-size:24px;margin:0 0 7px}.header p{margin:0;opacity:.9}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+label.field{display:block;font-weight:700;font-size:14px}
+input[type=text],input[type=date]{display:block;width:100%;margin-top:6px;border:1px solid #aebfcd;border-radius:9px;padding:12px;font-size:16px;background:#fff}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+button{appearance:none;border:0;border-radius:9px;padding:11px 15px;font-size:15px;font-weight:700;cursor:pointer}
+button.primary{background:var(--navy);color:#fff}button.secondary{background:#e7eff5;color:var(--navy)}
+button.danger{background:#f7e8e8;color:var(--red)}button.active{background:var(--blue);color:#fff}
+.section-title{background:var(--navy);color:white;padding:9px 12px;border-radius:8px;font-weight:700;margin:-2px 0 14px}
+.subhead{font-weight:700;color:var(--navy);margin:16px 0 8px;border-bottom:1px solid var(--border);padding-bottom:5px}
+.option{display:flex;gap:10px;align-items:flex-start;border:1px solid #e1e8ee;padding:10px;border-radius:9px;margin:7px 0;background:#fff}
+.option:hover{background:#f8fbfd}.option input{width:19px;height:19px;margin:1px 0 0;flex:0 0 auto}
+.small{font-size:13px;color:var(--muted)}
+.hidden{display:none!important}
+.result{border:2px solid var(--navy);background:var(--light)}
+.score{font-size:34px;font-weight:800;color:var(--navy)}
+.badge{display:inline-block;background:var(--navy);color:#fff;border-radius:999px;padding:6px 12px;font-weight:700}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+.notice{background:#fff7da;border:1px solid #e4c668;border-radius:9px;padding:10px 12px;font-size:13px}
+.report-preview{background:white;border:1px solid var(--border);border-radius:12px;padding:18px;margin-top:16px}
+.report-preview h2{margin:0 0 10px;color:var(--navy)}
+.report-preview ul{padding-left:22px}
+footer{color:var(--muted);font-size:12px;padding:8px 2px 20px}
+@media(max-width:720px){.app{padding:10px}.grid{grid-template-columns:1fr}.header{border-radius:10px}.card{padding:13px}}
+@media print{
+ body{background:#fff}.app{max-width:none;padding:0}
+ .no-print,.header,.tabs,.form-area,footer{display:none!important}
+ #printArea{display:block!important;border:0;margin:0;padding:0}
+ .report-preview{border:0;padding:0;margin:0}
+ @page{size:A4;margin:14mm}
+}
+
+/* --- Print/PDF replica --- */
+#printArea.form-replica{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:18px;
+}
+#printArea .pdf-head{
+  border:2px solid #1f2937;
+  padding:12px 14px;
+  text-align:center;
+  margin-bottom:12px;
+}
+#printArea .pdf-head h2{margin:0;font-size:19px;color:#111}
+#printArea .pdf-meta{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  border:1px solid #333;
+  padding:10px;
+  margin-bottom:10px;
+  font-size:13px;
+}
+#printArea .pdf-section{
+  border:1px solid #333;
+  margin:0 0 10px;
+  page-break-inside:auto;
+}
+#printArea .pdf-section-title{
+  background:#d9dde1;
+  border-bottom:1px solid #333;
+  font-weight:700;
+  text-align:center;
+  padding:6px 8px;
+}
+#printArea .pdf-instruction{
+  padding:8px 10px;
+  border-bottom:1px solid #777;
+  font-size:12px;
+}
+#printArea .pdf-subtitle{
+  background:#edf0f2;
+  border-bottom:1px solid #777;
+  border-top:1px solid #777;
+  font-weight:700;
+  padding:5px 8px;
+  font-size:12px;
+}
+#printArea .pdf-option{
+  display:grid;
+  grid-template-columns:24px 1fr auto;
+  gap:7px;
+  align-items:start;
+  padding:6px 8px;
+  border-bottom:1px solid #aaa;
+  font-size:11px;
+}
+#printArea .pdf-option:last-child{border-bottom:0}
+#printArea .pdf-check{
+  width:17px;height:17px;border:1.5px solid #111;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:13px;line-height:1;
+  margin-top:1px;
+}
+#printArea .pdf-radio{border-radius:50%}
+#printArea .pdf-selected .pdf-check{
+  background:#111;color:#fff;
+}
+#printArea .pdf-points{
+  white-space:nowrap;font-weight:700;padding-left:6px;
+}
+#printArea .pdf-result{
+  border:2px solid #111;
+  padding:10px;
+  margin-top:10px;
+}
+#printArea .pdf-result-row{
+  display:flex;justify-content:space-between;gap:12px;
+  padding:4px 0;border-bottom:1px solid #bbb;
+}
+#printArea .pdf-result-row:last-child{border-bottom:0}
+#printArea .pdf-note{
+  margin-top:8px;padding:8px;border:1px solid #777;background:#f6f6f6;font-size:11px;
+}
+@media print{
+  #printArea.form-replica{display:block!important;border:0!important;border-radius:0!important;padding:0!important}
+  #printArea .pdf-head,#printArea .pdf-meta,#printArea .pdf-section,#printArea .pdf-result{
+    break-inside:auto;
+  }
+  #printArea .pdf-option{break-inside:avoid}
+  #printArea .pdf-section-title,#printArea .pdf-subtitle{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
+
+
+/* Identidade visual dos relatórios */
+.header{background:linear-gradient(110deg,#102e57,#174c83)}
+.card{box-shadow:0 3px 15px rgba(16,46,87,.045)}
+.pdf-head{background:#f1f6fc;border:0!important;border-top:5px solid #174c83!important;border-bottom:2px solid #a3bdd9!important;border-radius:7px;text-align:left!important}
+.pdf-head h2{color:#123b63!important}
+.pdf-meta{border:1px solid #c5d7e7!important;background:#f6f9fc;border-radius:6px;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.pdf-section{border:1px solid #b9cce0!important;border-radius:6px;overflow:hidden}
+.pdf-section-title{background:#dce9f7!important;color:#153c67!important;text-align:left!important;border-bottom:1px solid #b9cce0!important}
+.pdf-subtitle{background:#eef4fb!important;color:#123b63!important}
+.pdf-result{border:2px solid #174c83!important;border-radius:8px;background:#f3f7fd}
+.pdf-selected{background:#e5f1ff!important;font-weight:600}
+.pdf-footer{margin-top:16px;border-top:3px solid #174c83;padding-top:12px;break-inside:avoid;font-size:12px}
+.pdf-footer .signature{margin:36px auto 0;width:65%;text-align:center;border-top:1px solid #263b52;padding-top:5px}
+@media print{.pdf-selected,.pdf-meta,.pdf-result,.pdf-head,.pdf-section-title,.pdf-subtitle{print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Instrumentos de Avaliação Clínica</h1>
+    <p>Versão HTML preenchível, com cálculo automático, relatório final, download em PDF e impressão.</p>
+  </div>
+
+  <div class="card no-print">
+    <div class="grid">
+      <label class="field">Nome do paciente
+        <input id="patientName" type="text" placeholder="Digite o nome do paciente">
+      </label>
+      <label class="field">Data de nascimento<input id="birthDate" type="date"></label>
+      <label class="field">Sexo<select id="patientSex" style="display:block;width:100%;margin-top:6px;padding:12px;border:1px solid #aebfcd;border-radius:9px"><option value="">Não informado</option><option>Feminino</option><option>Masculino</option><option>Outro</option></select></label>
+      <label class="field">Telefone<input id="patientPhone" type="text" placeholder="Telefone (opcional)"></label>
+      <label class="field">Local da avaliação<input id="patientPlace" type="text" placeholder="Local da avaliação"></label>
+      <label class="field">Diagnóstico principal<input id="patientDiagnosis" type="text" placeholder="Diagnóstico principal"></label>
+      <label class="field">Data da avaliação
+        <input id="assessmentDate" type="date">
+      </label>
+    </div>
+  </div>
+
+  <div class="card no-print">
+    <div class="section-title">Profissional que aplicou o instrumento</div>
+    <div class="grid">
+      <label class="field">Nome completo do profissional<input id="professionalName" type="text" placeholder="Nome completo"></label>
+      <label class="field">Categoria profissional<input id="professionalCategory" type="text" placeholder="Ex.: Médico(a), Enfermeiro(a)"></label>
+      <label class="field">Número do conselho<input id="professionalNumber" type="text" placeholder="Número do registro"></label>
+      <label class="field">UF do conselho<select id="professionalUF" style="display:block;width:100%;margin-top:6px;padding:12px;border:1px solid #aebfcd;border-radius:9px"><option value="">Selecione</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></label>
+    </div>
+  </div>
+  <div class="tabs no-print">
+    <button id="tabIAEC" class="active" type="button">IAEC-AD</button>
+    <button id="tabSPICT" class="secondary" type="button">SPICT-BR</button>
+    <button id="tabPPS" class="secondary" type="button">PPS</button>
+  </div>
+
+  <div id="iaecForm" class="form-area">
+    <div class="card">
+      <div class="section-title">Instrumento de Avaliação da Elegibilidade e Complexidade da Atenção Domiciliar (IAEC-AD)</div>
+
+      <div class="subhead">INDICAÇÕES CLÍNICAS MAIS FREQUENTES PARA AD2/AD3</div>
+      <p>Selecione uma ou mais das seguintes opções para definira principal indicação clínica do paciente.</p>
+      <label class="option"><input type="checkbox" class="iaec-ind"><span>Condição de saúde crônica agudizada que requeira atendimento multiprofissional no domicílio, com foco no melhor controle de sintomas causados pela condição de base, incluindo situações de cuidados paliativos.</span></label>
+      <label class="option"><input type="checkbox" class="iaec-ind"><span>Lesão de pele de difícil manejo pela equipe assistente que requeira avaliação semanal em domicílio, alémdo possível uso de coberturas especiais.</span></label>
+      <label class="option"><input type="checkbox" class="iaec-ind"><span>Reabilitação multiprofissional compossibilidade de ganho funcional, especialmente após cirurgia de grande porte, evento agudo, fratura ou hospitalização prolongada.</span></label>
+      <label class="option"><input type="checkbox" class="iaec-ind"><span>Uso de antibioticoterapia parenteral domiciliar ou outra medicação parenteral seriada, desde que haja mínima estabilidade clínica para permanência no domicílio.</span></label>
+      <label class="option"><input type="checkbox" class="iaec-ind"><span>Prematuridade e baixo peso em bebês com necessidade de ganho ponderal.</span></label>
+      <label class="option"><input id="iaecNone" type="checkbox" class="iaec-ind"><span>Nenhuma das condições acima.</span></label>
+    </div>
+
+    <div class="card">
+      <div class="section-title">SISTEMA DE PONTUAÇÃO</div>
+
+      <div class="subhead">INDICAÇÕES CLÍNICAS ESPECIAIS OU GATILHOS</div>
+      <p>Selecione uma ou mais das opções a seguir.</p>
+      <p><strong>(A presença de qualquer uma delas já classifica o usuário como AD2 ou AD3, INDEPENDENTE DA PONTUAÇÃO FINAL).</strong></p>
+      <label class="option"><input type="checkbox" class="iaec-score" data-points="5" data-trigger="AD2"><span>AD2: Necessidade diária de curativos complexos e/ ou medicação parenteral (IM/EV/SC - exceto insulina) – 5 pontos</span></label>
+      <label class="option"><input type="checkbox" class="iaec-score" data-points="5" data-trigger="AD3"><span>AD3: Necessidade de tratamentos de alta complexidade ou intensidade no domicílio: transfusão sanguínea, paracentese, nutrição parenteral, cuidados paliativos sequenciais para manejo de sintomas mal controlados, dentre outros E/OU uso de Ventilação Mecânica Invasiva – 5 pontos</span></label>
+
+      <div class="subhead">USO DO SISTEMA DE SAÚDE</div>
+      <p><strong>Histórico de internação hospitalar nos últimos três meses.</strong></p>
+      <label class="option"><input type="radio" name="internacao" class="iaec-score" data-points="0"><span>Nenhuma internação hospitalar nos últimos 3 meses – 0 ponto</span></label>
+      <label class="option"><input type="radio" name="internacao" class="iaec-score" data-points="1"><span>Pelo menos uma internação hospitalar nos últimos 3 meses – 1 ponto</span></label>
+      <label class="option"><input type="radio" name="internacao" class="iaec-score" data-points="2"><span>Duas ou mais internações hospitalares nos últimos 3 meses – 2 pontos</span></label>
+      <label class="option"><input type="radio" name="internacao" class="iaec-score" data-points="4"><span>Pelo menos uma internação em UTI nos últimos 3 meses – 4 pontos</span></label>
+
+      <p><strong>Frequência de procura por serviços de urgência nos últimos três meses (SAMU, UPA, Pronto-Socorro)</strong></p>
+      <label class="option"><input type="radio" name="urgencia" class="iaec-score" data-points="0"><span>Nenhuma procura por serviço de urgência nos últimos 3 meses – 0 ponto</span></label>
+      <label class="option"><input type="radio" name="urgencia" class="iaec-score" data-points="1"><span>Procurou por serviço de urgência 02 vezes nos últimos 3 meses – 1 ponto</span></label>
+      <label class="option"><input type="radio" name="urgencia" class="iaec-score" data-points="2"><span>Procurou por serviço de urgência de 03 a 04 vezes nos últimos 3 meses – 2 pontos</span></label>
+      <label class="option"><input type="radio" name="urgencia" class="iaec-score" data-points="3"><span>Procurou por serviço de urgência 05 ou mais vezes nos últimos 3 meses – 3 pontos</span></label>
+
+      <p><strong>Tempo de permanência hospitalar nos últimos três meses. Considerar o maior período no caso de múltiplas internações prévias.</strong></p>
+      <label class="option"><input type="radio" name="permanencia" class="iaec-score" data-points="0"><span>Sem história de internação prévia – 0 ponto</span></label>
+      <label class="option"><input type="radio" name="permanencia" class="iaec-score" data-points="1"><span>Até 07 dias – 1 ponto</span></label>
+      <label class="option"><input type="radio" name="permanencia" class="iaec-score" data-points="2"><span>De 07 a 30 dias – 2 pontos</span></label>
+      <label class="option"><input type="radio" name="permanencia" class="iaec-score" data-points="3"><span>Mais de 30 dias – 3 pontos</span></label>
+
+      <div class="subhead">VULNERABILIDADE SOCIAL</div>
+      <p><strong>Relação morador-cômodo: divida o número demoradores pelo número de cômodos, selecionando a opção apropriada.</strong></p>
+      <label class="option"><input type="radio" name="morador" class="iaec-score" data-points="0"><span>Menor que 01 – 0 ponto</span></label>
+      <label class="option"><input type="radio" name="morador" class="iaec-score" data-points="1"><span>Igual a 01 – 1 ponto</span></label>
+      <label class="option"><input type="radio" name="morador" class="iaec-score" data-points="2"><span>Maior que 01 – 2 pontos</span></label>
+
+      <div class="subhead">SUPORTE FAMILIAR/CUIDADO</div>
+      <p><strong>Identifique o suporte de cuidado, seja da família ou de cuidadores.</strong></p>
+      <label class="option"><input type="radio" name="suporte" class="iaec-score" data-points="0"><span>Paciente com suporte familiar adequado – 0 ponto</span></label>
+      <label class="option"><input type="radio" name="suporte" class="iaec-score" data-points="1"><span>Paciente com suporte familiar inadequado – 1 ponto</span></label>
+
+      <div class="subhead">FUNCIONALIDADE</div>
+      <p>Preencha este campo considerando a idade do paciente, para posterior identificação do grau de dependência, de acordo com sua faixa etária.</p>
+      <label class="option"><input type="radio" name="faixa" value="ate7"><span>Para crianças de até 07 anos</span></label>
+      <label class="option"><input type="radio" name="faixa" value="maior7"><span>Para crianças maiores de 07 anos, adultos e idosos</span></label>
+
+      <div id="ate7" class="hidden">
+        <p><strong>Em relação ao desenvolvimento neuropsicomotor</strong></p>
+        <label class="option"><input type="radio" name="dnpm" class="iaec-score functional-young" data-points="0"><span>Acompanha o desenvolvimento neuropsicomotor – 0 ponto</span></label>
+        <label class="option"><input type="radio" name="dnpm" class="iaec-score functional-young" data-points="6"><span>Não acompanha o desenvolvimento neuropsicomotor – 6 pontos</span></label>
+      </div>
+
+      <div id="maior7" class="hidden">
+        <p><strong>Capacidade para tomar banho</strong></p>
+        <label class="option"><input type="radio" name="banho" class="iaec-score functional-old" data-points="0"><span>Independente – 0 ponto</span></label>
+        <label class="option"><input type="radio" name="banho" class="iaec-score functional-old" data-points="1"><span>Dependente parcial – 1 ponto</span></label>
+        <label class="option"><input type="radio" name="banho" class="iaec-score functional-old" data-points="2"><span>Dependente completo – 2 pontos</span></label>
+        <p><strong>Capacidade para alimentar-se</strong></p>
+        <label class="option"><input type="radio" name="alimentar" class="iaec-score functional-old" data-points="0"><span>Independente – 0 ponto</span></label>
+        <label class="option"><input type="radio" name="alimentar" class="iaec-score functional-old" data-points="1"><span>Dependente parcial – 1 ponto</span></label>
+        <label class="option"><input type="radio" name="alimentar" class="iaec-score functional-old" data-points="2"><span>Dependente completo – 2 pontos</span></label>
+        <p><strong>Capacidade para locomover-se</strong></p>
+        <label class="option"><input type="radio" name="locomover" class="iaec-score functional-old" data-points="0"><span>Independente – 0 ponto</span></label>
+        <label class="option"><input type="radio" name="locomover" class="iaec-score functional-old" data-points="1"><span>Dependente parcial – 1 ponto</span></label>
+        <label class="option"><input type="radio" name="locomover" class="iaec-score functional-old" data-points="2"><span>Dependente completo – 2 pontos</span></label>
+      </div>
+
+      <div class="subhead">POLIFARMÁCIA</div>
+      <p><strong>Uso de cinco ou mais medicações de uso contínuo, diariamente</strong></p>
+      <label class="option"><input type="radio" name="polifarmacia" class="iaec-score" data-points="0"><span>Não – 0 ponto</span></label>
+      <label class="option"><input type="radio" name="polifarmacia" class="iaec-score" data-points="1"><span>Sim – 1 ponto</span></label>
+    </div>
+
+    <div class="card result">
+      <div class="section-title">PONTUAÇÃO FINAL</div>
+      <div class="score"><span id="iaecTotal">0</span> pontos</div>
+      <p><span id="iaecClass" class="badge">AD1</span></p>
+      <p id="iaecTrigger"></p>
+      <p id="iaecOpinion"></p>
+      <p><strong>AD1</strong> Até 09 pontos<br><strong>AD2</strong> De 10 a 15 pontos<br><strong>AD3</strong> Maior ou igual a 16 pontos</p>
+      <div class="actions no-print">
+        <button id="previewIAEC" class="secondary" type="button">Atualizar relatório</button>
+        <button id="pdfIAEC" class="primary" type="button">Gerar PDF (formulário completo)</button>
+        <button id="printIAEC" class="secondary" type="button">Imprimir</button>
+        <button id="clearIAEC" class="danger" type="button">Limpar IAEC-AD</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="spictForm" class="form-area hidden">
+    <div class="card">
+      <div class="section-title">Supportive and Palliative Care Indicators Tool (SPICT-BR )</div>
+      <p><strong>O SPICT é utilizado para ajudar a identificar pessoas cuja saúde está deteriorando. Avalie quanto às necessidades de suporte e cuidados paliativos não atendidas. Plano de cuidados.</strong></p>
+
+      <div class="subhead">Procure por indicadores gerais de saúde em deterioração.</div>
+      <label class="option"><input type="checkbox" class="spict-general"><span>Internação(ões) hospitalar(es) não programada(s).</span></label>
+      <label class="option"><input type="checkbox" class="spict-general"><span>Declínio funcional progressivo com limitada reversibilidade. (Ex.: A pessoa permanece na cama ou numa cadeira mais da metade do tempo).</span></label>
+      <label class="option"><input type="checkbox" class="spict-general"><span>A pessoa depende de outros para cuidados pessoais devido ao aumento de problemas físicos e/ou de saúde mental. O cuidador necessita de mais ajuda e suporte.</span></label>
+      <label class="option"><input type="checkbox" class="spict-general"><span>Perda de peso progressiva; permanece abaixo do peso; baixa massa muscular.</span></label>
+      <label class="option"><input type="checkbox" class="spict-general"><span>Sintomas persistentes apesar do tratamento otimizado da(s) condição(ões) de base.</span></label>
+      <label class="option"><input type="checkbox" class="spict-general"><span>A pessoa (ou a família) solicita cuidados paliativos; opta por reduzir, parar ou não fazer o tratamento; ou deseja focar na qualidade de vida.</span></label>
+
+      <div class="subhead">Procure por indicadores clínicos de uma ou mais condições de saúde que limitam a vida.</div>
+      <p><strong>Câncer</strong></p>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Câncer"><span>Capacidade funcional em declínio devido à progressão do câncer.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Câncer"><span>Muito debilitado(a) para o tratamento do câncer ou o tratamento tem finalidade de controle dos sintomas.</span></label>
+
+      <p><strong>Demência/ fragilidade</strong></p>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Demência/ fragilidade"><span>Incapaz de vestir-se, caminhar ou comer sem ajuda.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Demência/ fragilidade"><span>Comendo e bebendo menos; dificuldade com a deglutição.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Demência/ fragilidade"><span>Incontinência urinária e fecal.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Demência/ fragilidade"><span>Incapaz de se comunicar através da fala; pouca interação social.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Demência/ fragilidade"><span>Quedas frequentes; fratura de fêmur.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Demência/ fragilidade"><span>Episódios frequentes de febre ou infecções; pneumonia aspirativa.</span></label>
+
+      <p><strong>Doença neurológica</strong></p>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Doença neurológica"><span>Deterioração progressiva da capacidade física e/ou da função cognitiva mesmo com terapia otimizada.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Doença neurológica"><span>Problema de fala com dificuldade crescente de comunicação e/ou dificuldade progressiva de deglutição.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Doença neurológica"><span>Pneumonia aspirativa recorrente; falta de ar ou insuficiência respiratória.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Doença neurológica"><span>Paralisia persistente após acidente vascular cerebral com perda significativa da funcionalidade e incapacidade contínua.</span></label>
+
+      <p><strong>Doença cardiovascular</strong></p>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Doença cardiovascular"><span>Insuficiência cardíaca ou doença arterial coronária extensa, refratárias ao tratamento otimizado; com falta de ar ou dor no peito em repouso ou ao mínimo esforço.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Doença cardiovascular"><span>Doença vascular periférica grave, inoperável.</span></label>
+
+      <p><strong>Doença respiratória</strong></p>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Doença respiratória"><span>Doença pulmonar crônica grave; com falta de ar em repouso ou ao mínimo esforço entre as exacerbações.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Doença respiratória"><span>Hipóxia persistente que necessita de oxigenioterapia contínua.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Doença respiratória"><span>Já precisou de ventilação invasiva para insuficiência respiratória ou a intubação orotraqueal é contraindicada.</span></label>
+
+      <p><strong>Doença renal</strong></p>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Doença renal"><span>Estágios 4 ou 5 de doença renal crônica (TFG&lt; 30ml/min) com deterioração da saúde.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Doença renal"><span>Insuficiência renal como fator complicador para outras condições limitantes ou tratamentos.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Doença renal"><span>Parar ou não iniciar diálise.</span></label>
+
+      <p><strong>Doença hepática</strong></p>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Doença hepática"><span>Cirrose com uma ou mais complicações no último ano:<br>• Ascite refratária a diuréticos;<br>• Encefalopatia hepática;<br>• Síndrome hepatorrenal;<br>• Peritonite bacteriana;<br>• Sangramentos recorrentes de varizes decorrentes de hipertensão portal.</span></label>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Doença hepática"><span>Transplante de fígado não é possível.</span></label>
+
+      <p><strong>Outras condições</strong></p>
+      <label class="option"><input type="checkbox" class="spict-clinical" data-group="Outras condições"><span>Deterioração com outras condições múltiplas e/ou complicações irreversíveis; o melhor tratamento disponível resulta em um desfecho desfavorável.</span></label>
+
+      <div class="subhead">Revisar o cuidado atual e o plano de cuidados.</div>
+      <ul>
+        <li>Revise o tratamento e os medicamentos atuais para garantir que a pessoa receba o cuidado otimizado; diminuir a polifarmácia.</li>
+        <li>Considere o encaminhamento para avaliação para uma equipe de Cuidados Paliativos se os sintomas ou problemas forem complexos e difíceis de manejar.</li>
+        <li>Elaborar um plano de cuidados para o momento atual e para o futuro com a pessoa e seus familiares/pessoas próximas. Apoiar os cuidadores.</li>
+        <li>Planejar com antecedência caso seja provável a perda da capacidade de tomada de decisão.</li>
+        <li>Registrar, compartilhar e revisar os planos de cuidados.</li>
+      </ul>
+    </div>
+
+    <div class="card result">
+      <div class="section-title">Resultado da aplicação do SPICT-BR</div>
+      <p><strong>Indicadores gerais selecionados:</strong> <span id="spictGeneralCount">0</span></p>
+      <p><strong>Indicadores clínicos selecionados:</strong> <span id="spictClinicalCount">0</span></p>
+      <p id="spictGroups"></p>
+      <p id="spictOpinion"></p>
+      <div class="notice">O SPICT-BR apresentado não possui sistema de pontuação numérica. As contagens exibidas correspondem apenas ao número de indicadores selecionados e não constituem um escore.</div>
+      <div class="actions no-print">
+        <button id="previewSPICT" class="secondary" type="button">Atualizar relatório</button>
+        <button id="pdfSPICT" class="primary" type="button">Gerar PDF (formulário completo)</button>
+        <button id="printSPICT" class="secondary" type="button">Imprimir</button>
+        <button id="clearSPICT" class="danger" type="button">Limpar SPICT-BR</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="ppsForm" class="form-area hidden">
+    <div class="card">
+      <div class="section-title">A Escala de Desempenho em Cuidados Paliativos versão 2 (EDCP v2)</div>
+      <p><strong>TRADUÇÃO BRASILEIRA PARA A LÍNGUA PORTUGUESA</strong></p>
+      <p class="small">Portuguese Brazilian translation of Palliative Performance Scale (PPS version 2)</p>
+      <div class="notice">
+        <strong>INSTRUÇÕES PARA O USO DO PPS:</strong> os escores PPS são determinados lendo-se a tabela na horizontal, em cada linha, até encontrar o nível ou características que “melhor se adequam” ao paciente que está sendo avaliado. As colunas mais à esquerda são características mais “fortes” na determinação do escore. O PPS apresenta incrementos de 10% sempre; não deve ser usado “meio termo”, como 45%.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Selecione a linha que melhor descreve a condição do paciente</div>
+      <div class="small" style="margin-bottom:12px">Toque em uma linha para selecionar o PPS correspondente.</div>
+
+      <label class="option pps-row">
+        <input type="radio" name="pps" class="pps-choice" value="100">
+        <span><strong>PPS 100%</strong><br><strong>Deambulação:</strong> Completa<br><strong>Atividade e evidência da doença:</strong> Atividade normal e trabalho; sem evidência de doença<br><strong>Auto-cuidado:</strong> Completo<br><strong>Ingesta:</strong> Normal<br><strong>Nível da Consciência:</strong> Completa</span>
+      </label>
+
+      <label class="option pps-row">
+        <input type="radio" name="pps" class="pps-choice" value="90">
+        <span><strong>PPS 90%</strong><br><strong>Deambulação:</strong> Completa<br><strong>Atividade e evidência da doença:</strong> Atividade normal e trabalho; alguma evidência de doença<br><strong>Auto-cuidado:</strong> Completo<br><strong>Ingesta:</strong> Normal<br><strong>Nível da Consciência:</strong> Completa</span>
+      </label>
+
+      <label class="option pps-row">
+        <input type="radio" name="pps" class="pps-choice" value="80">
+        <span><strong>PPS 80%</strong><br><strong>Deambulação:</strong> Completa<br><strong>Atividade e evidência da doença:</strong> Atividade normal com esforço; alguma evidência de doença<br><strong>Auto-cuidado:</strong> Completo<br><strong>Ingesta:</strong> Normal ou reduzida<br><strong>Nível da Consciência:</strong> Completa</span>
+      </label>
+
+      <label class="option pps-row">
+        <input type="radio" name="pps" class="pps-choice" value="70">
+        <span><strong>PPS 70%</strong><br><strong>Deambulação:</strong> Reduzida<br><strong>Atividade e evidência da doença:</strong> Incapaz para o trabalho; doença significativa<br><strong>Auto-cuidado:</strong> Completo<br><strong>Ingesta:</strong> Normal ou reduzida<br><strong>Nível da Consciência:</strong> Completa</span>
+      </label>
+
+      <label class="option pps-row">
+        <input type="radio" name="pps" class="pps-choice" value="60">
+        <span><strong>PPS 60%</strong><br><strong>Deambulação:</strong> Reduzida<br><strong>Atividade e evidência da doença:</strong> Incapaz para hobbies/trabalho doméstico; doença significativa<br><strong>Auto-cuidado:</strong> Assistência ocasional<br><strong>Ingesta:</strong> Normal ou reduzida<br><strong>Nível da Consciência:</strong> Completa ou períodos de confusão</span>
+      </label>
+
+      <label class="option pps-row">
+        <input type="radio" name="pps" class="pps-choice" value="50">
+        <span><strong>PPS 50%</strong><br><strong>Deambulação:</strong> Maior parte de tempo sentado ou deitado<br><strong>Atividade e evidência da doença:</strong> Incapacitado para qualquer trabalho; doença extensa<br><strong>Auto-cuidado:</strong> Assistência considerável<br><strong>Ingesta:</strong> Normal ou reduzida<br><strong>Nível da Consciência:</strong> Completa ou períodos de confusão</span>
+      </label>
+
+      <label class="option pps-row">
+        <input type="radio" name="pps" class="pps-choice" value="40">
+        <span><strong>PPS 40%</strong><br><strong>Deambulação:</strong> Maior parte do tempo acamado<br><strong>Atividade e evidência da doença:</strong> Incapaz para a maioria das atividades; doença extensa<br><strong>Auto-cuidado:</strong> Assistência quase completa<br><strong>Ingesta:</strong> Normal ou reduzida<br><strong>Nível da Consciência:</strong> Completa ou sonolência +/- confusão</span>
+      </label>
+
+      <label class="option pps-row">
+        <input type="radio" name="pps" class="pps-choice" value="30">
+        <span><strong>PPS 30%</strong><br><strong>Deambulação:</strong> Totalmente acamado<br><strong>Atividade e evidência da doença:</strong> Incapaz para qualquer atividade; doença extensa<br><strong>Auto-cuidado:</strong> Dependência completa<br><strong>Ingesta:</strong> Normal ou Reduzida<br><strong>Nível da Consciência:</strong> Completa ou sonolência +/- confusão</span>
+      </label>
+
+      <label class="option pps-row">
+        <input type="radio" name="pps" class="pps-choice" value="20">
+        <span><strong>PPS 20%</strong><br><strong>Deambulação:</strong> Totalmente acamado<br><strong>Atividade e evidência da doença:</strong> Incapaz para qualquer atividade;doença extensa<br><strong>Auto-cuidado:</strong> Dependência completa<br><strong>Ingesta:</strong> Mínima a pequenos goles<br><strong>Nível da Consciência:</strong> Completa ou sonolência +/- confusão</span>
+      </label>
+
+      <label class="option pps-row">
+        <input type="radio" name="pps" class="pps-choice" value="10">
+        <span><strong>PPS 10%</strong><br><strong>Deambulação:</strong> Totalmente acamado<br><strong>Atividade e evidência da doença:</strong> Incapaz para qualquer atividade; doença extensa<br><strong>Auto-cuidado:</strong> Dependência completa<br><strong>Ingesta:</strong> Cuidados com a boca<br><strong>Nível da Consciência:</strong> Sonolento ou coma. +/- confusão</span>
+      </label>
+
+      <label class="option pps-row">
+        <input type="radio" name="pps" class="pps-choice" value="0">
+        <span><strong>PPS 0%</strong><br><strong>Deambulação:</strong> Morte<br><strong>Atividade e evidência da doença:</strong> -<br><strong>Auto-cuidado:</strong> -<br><strong>Ingesta:</strong> -<br><strong>Nível da Consciência:</strong> -</span>
+      </label>
+    </div>
+
+    <div class="card result">
+      <div class="section-title">Resultado da aplicação do PPS</div>
+      <div class="score"><span id="ppsScore">—</span></div>
+      <p id="ppsOpinion">Nenhuma linha do PPS foi selecionada.</p>
+      <div class="notice">
+        O resultado corresponde à linha selecionada como aquela que melhor descreve, como um todo, a condição atual do paciente. O instrumento deve ser utilizado em incrementos de 10%.
+      </div>
+      <div class="actions no-print">
+        <button id="previewPPS" class="secondary" type="button">Atualizar relatório</button>
+        <button id="pdfPPS" class="primary" type="button">Gerar PDF (formulário completo)</button>
+        <button id="printPPS" class="secondary" type="button">Imprimir</button>
+        <button id="clearPPS" class="danger" type="button">Limpar PPS</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="printArea" class="report-preview">
+    <h2>Relatório final</h2>
+    <p class="small">O relatório será atualizado ao clicar em “Atualizar relatório”, “Gerar PDF” ou “Imprimir”.</p>
+  </div>
+
+  <footer>Arquivo autônomo. Os botões “Gerar PDF” e “Imprimir” abrem a versão A4 do próprio formulário, com todas as opções e as seleções realizadas.</footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clean = s => String(s ?? '').replace(/\s+/g,' ').trim();
+const selectedText = selector => $$(selector + ':checked').filter(x => !x.disabled).map(x => clean(x.closest('label')?.innerText || ''));
+
+function patient(){ return clean($('#patientName').value) || 'Não informado'; }
+function dateBR(){
+  const v = $('#assessmentDate').value;
+  if(!v) return 'Não informada';
+  const [y,m,d] = v.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function switchTab(which){
+  $('#iaecForm').classList.toggle('hidden', which !== 'iaec');
+  $('#spictForm').classList.toggle('hidden', which !== 'spict');
+  $('#ppsForm').classList.toggle('hidden', which !== 'pps');
+  $('#tabIAEC').className = which === 'iaec' ? 'active' : 'secondary';
+  $('#tabSPICT').className = which === 'spict' ? 'active' : 'secondary';
+  $('#tabPPS').className = which === 'pps' ? 'active' : 'secondary';
+}
+$('#tabIAEC').addEventListener('click',()=>switchTab('iaec'));
+$('#tabSPICT').addEventListener('click',()=>switchTab('spict'));
+$('#tabPPS').addEventListener('click',()=>switchTab('pps'));
+
+const none = $('#iaecNone');
+$$('.iaec-ind').forEach(el => el.addEventListener('change', () => {
+  if(el === none && el.checked) $$('.iaec-ind').filter(x=>x!==none).forEach(x=>x.checked=false);
+  if(el !== none && el.checked) none.checked=false;
+}));
+
+function setFunctionalMode(){
+  const mode = $('input[name="faixa"]:checked')?.value || '';
+  $('#ate7').classList.toggle('hidden', mode !== 'ate7');
+  $('#maior7').classList.toggle('hidden', mode !== 'maior7');
+  $$('.functional-young').forEach(x => x.disabled = mode !== 'ate7');
+  $$('.functional-old').forEach(x => x.disabled = mode !== 'maior7');
+  updateIAEC();
+}
+$$('input[name="faixa"]').forEach(x=>x.addEventListener('change',setFunctionalMode));
+
+function iaecState(){
+  let total=0, ad2=false, ad3=false;
+  $$('.iaec-score:checked').forEach(x=>{
+    if(x.disabled) return;
+    total += Number(x.dataset.points || 0);
+    if(x.dataset.trigger==='AD2') ad2=true;
+    if(x.dataset.trigger==='AD3') ad3=true;
+  });
+  const byScore = total >= 16 ? 'AD3' : total >= 10 ? 'AD2' : 'AD1';
+  let finalClass = byScore;
+  if(ad3) finalClass='AD3';
+  else if(ad2 && byScore==='AD1') finalClass='AD2';
+
+  let trigger='Nenhuma indicação clínica especial ou gatilho selecionado.';
+  if(ad2 && ad3) trigger='Gatilhos AD2 e AD3 selecionados.';
+  else if(ad3) trigger='Gatilho AD3 selecionado.';
+  else if(ad2) trigger='Gatilho AD2 selecionado.';
+
+  let opinion=`Pela pontuação no instrumento: ${byScore}.`;
+  if(ad3) opinion += ' A presença da indicação clínica especial selecionada classifica o usuário como AD3, independente da pontuação final.';
+  else if(ad2) opinion += ' A presença da indicação clínica especial selecionada classifica o usuário como AD2, independente da pontuação final.';
+  return {total,byScore,finalClass,trigger,opinion};
+}
+
+function updateIAEC(){
+  const s=iaecState();
+  $('#iaecTotal').textContent=s.total;
+  $('#iaecClass').textContent=s.finalClass;
+  $('#iaecTrigger').textContent=s.trigger;
+  $('#iaecOpinion').textContent=s.opinion;
+}
+$$('.iaec-score').forEach(x=>x.addEventListener('change',updateIAEC));
+
+function spictState(){
+  const general=$$('.spict-general:checked');
+  const clinical=$$('.spict-clinical:checked');
+  const groups=[...new Set(clinical.map(x=>x.dataset.group))];
+  let opinion='Nenhum indicador foi selecionado.';
+  if(general.length && clinical.length) opinion='Foram selecionados indicadores gerais de saúde em deterioração e indicadores clínicos de uma ou mais condições de saúde que limitam a vida. Revisar o cuidado atual e o plano de cuidados.';
+  else if(general.length) opinion='Foram selecionados indicadores gerais de saúde em deterioração. Avalie quanto às necessidades de suporte e cuidados paliativos não atendidas. Plano de cuidados.';
+  else if(clinical.length) opinion='Foram selecionados indicadores clínicos de uma ou mais condições de saúde que limitam a vida. Revisar o cuidado atual e o plano de cuidados.';
+  return {general,clinical,groups,opinion};
+}
+function updateSPICT(){
+  const s=spictState();
+  $('#spictGeneralCount').textContent=s.general.length;
+  $('#spictClinicalCount').textContent=s.clinical.length;
+  $('#spictGroups').textContent=s.groups.length ? 'Condições com indicadores selecionados: '+s.groups.join('; ')+'.' : 'Nenhuma condição clínica selecionada.';
+  $('#spictOpinion').textContent=s.opinion;
+}
+
+$$('.spict-general,.spict-clinical').forEach(x=>x.addEventListener('change',updateSPICT));
+
+function ppsState(){
+  const x = $('input[name="pps"]:checked');
+  if(!x) return {score:null,text:'',opinion:'Nenhuma linha do PPS foi selecionada.'};
+  const score = Number(x.value);
+  const text = clean(x.closest('label')?.innerText || '');
+  return {
+    score,
+    text,
+    opinion:`PPS ${score}% — linha selecionada como aquela que melhor descreve, como um todo, a condição atual do paciente.`
+  };
+}
+function updatePPS(){
+  const s=ppsState();
+  $('#ppsScore').textContent=s.score===null?'—':`PPS ${s.score}%`;
+  $('#ppsOpinion').textContent=s.opinion;
+}
+$$('.pps-choice').forEach(x=>x.addEventListener('change',updatePPS));
+
+
+function reportIAEC(){
+  const s=iaecState();
+  const indications=selectedText('.iaec-ind');
+  const scored=selectedText('.iaec-score');
+  let html = `<h2>RELATÓRIO FINAL - IAEC-AD</h2>
+    <p><strong>Paciente:</strong> ${esc(patient())}<br><strong>Data da avaliação:</strong> ${esc(dateBR())}</p>
+    <p><strong>Instrumento de Avaliação da Elegibilidade e Complexidade da Atenção Domiciliar (IAEC-AD)</strong></p>
+    <p><strong>PONTUAÇÃO FINAL:</strong> ${s.total} pontos<br><strong>Modalidade AD:</strong> ${esc(s.finalClass)}</p>
+    <p>${esc(s.trigger)}</p><p>${esc(s.opinion)}</p>
+    <h3>INDICAÇÕES CLÍNICAS MAIS FREQUENTES PARA AD2/AD3</h3>
+    <ul>${(indications.length?indications:['Nenhuma opção selecionada.']).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+    <h3>Itens selecionados no SISTEMA DE PONTUAÇÃO</h3>
+    <ul>${(scored.length?scored:['Nenhum item selecionado.']).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+    <p><strong>AD1</strong> Até 09 pontos<br><strong>AD2</strong> De 10 a 15 pontos<br><strong>AD3</strong> Maior ou igual a 16 pontos</p>`;
+  $('#printArea').innerHTML=html;
+  return html;
+}
+
+function reportSPICT(){
+  const s=spictState();
+  const general=selectedText('.spict-general');
+  const clinical=selectedText('.spict-clinical');
+  let html = `<h2>RELATÓRIO FINAL - SPICT-BR</h2>
+    <p><strong>Paciente:</strong> ${esc(patient())}<br><strong>Data da avaliação:</strong> ${esc(dateBR())}</p>
+    <p><strong>Supportive and Palliative Care Indicators Tool (SPICT-BR )</strong></p>
+    <p>O SPICT é utilizado para ajudar a identificar pessoas cuja saúde está deteriorando. Avalie quanto às necessidades de suporte e cuidados paliativos não atendidas. Plano de cuidados.</p>
+    <p><strong>Indicadores gerais selecionados:</strong> ${s.general.length}<br><strong>Indicadores clínicos selecionados:</strong> ${s.clinical.length}</p>
+    <p><strong>Condições com indicadores selecionados:</strong> ${esc(s.groups.length?s.groups.join('; '):'Nenhuma condição clínica selecionada.')}</p>
+    <p>${esc(s.opinion)}</p>
+    <h3>Procure por indicadores gerais de saúde em deterioração.</h3>
+    <ul>${(general.length?general:['Nenhum indicador selecionado.']).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+    <h3>Procure por indicadores clínicos de uma ou mais condições de saúde que limitam a vida.</h3>
+    <ul>${(clinical.length?clinical:['Nenhum indicador selecionado.']).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+    <h3>Revisar o cuidado atual e o plano de cuidados.</h3>
+    <ul>
+      <li>Revise o tratamento e os medicamentos atuais para garantir que a pessoa receba o cuidado otimizado; diminuir a polifarmácia.</li>
+      <li>Considere o encaminhamento para avaliação para uma equipe de Cuidados Paliativos se os sintomas ou problemas forem complexos e difíceis de manejar.</li>
+      <li>Elaborar um plano de cuidados para o momento atual e para o futuro com a pessoa e seus familiares/pessoas próximas. Apoiar os cuidadores.</li>
+      <li>Planejar com antecedência caso seja provável a perda da capacidade de tomada de decisão.</li>
+      <li>Registrar, compartilhar e revisar os planos de cuidados.</li>
+    </ul>
+    <p><em>O SPICT-BR não apresenta pontuação numérica. As contagens acima representam apenas a quantidade de indicadores selecionados.</em></p>`;
+  $('#printArea').innerHTML=html;
+  return html;
+}
+
+
+/* ---------- Form replica for PDF / printing ---------- */
+function markBox(checked, radio=false){
+  return `<span class="pdf-check ${radio?'pdf-radio':''}">${checked?'✓':''}</span>`;
+}
+function getLabelText(input){
+  const span=input.closest('label')?.querySelector('span');
+  return clean(span ? span.innerText : (input.closest('label')?.innerText || ''));
+}
+function rowForInput(input){
+  const checked=input.checked && !input.disabled;
+  const points=input.dataset.points !== undefined ? input.dataset.points : '';
+  return `<div class="pdf-option ${checked?'pdf-selected':''}">
+    ${markBox(checked,input.type==='radio')}
+    <div>${esc(getLabelText(input))}</div>
+    <div class="pdf-points">${points!=='' ? esc(points)+(Number(points)===1?' ponto':' pontos') : ''}</div>
+  </div>`;
+}
+function rows(selector){
+  return $$(selector).map(rowForInput).join('');
+}
+function section(title, inner, instruction=''){
+  return `<div class="pdf-section">
+    <div class="pdf-section-title">${esc(title)}</div>
+    ${instruction?`<div class="pdf-instruction">${instruction}</div>`:''}
+    ${inner}
+  </div>`;
+}
+function metaBlock(){
+  const bd=$('#birthDate').value;
+  let age='Não informada';
+  if(bd){const b=new Date(bd+'T12:00:00');const d=$('#assessmentDate').value?new Date($('#assessmentDate').value+'T12:00:00'):new Date();let a=d.getFullYear()-b.getFullYear();if(d.getMonth()<b.getMonth()||(d.getMonth()===b.getMonth()&&d.getDate()<b.getDate()))a--;if(a>=0&&a<130)age=a+' anos';}
+  const birth=bd?bd.split('-').reverse().join('/'):'Não informada';
+  return `<div class="pdf-meta">
+    <div><strong>Paciente:</strong> ${esc(patient())}</div><div><strong>Data da avaliação:</strong> ${esc(dateBR())}</div>
+    <div><strong>Data de nascimento:</strong> ${esc(birth)}</div><div><strong>Idade:</strong> ${esc(age)}</div>
+    <div><strong>Sexo:</strong> ${esc(info('#patientSex'))}</div><div><strong>Telefone:</strong> ${esc(info('#patientPhone'))}</div>
+    <div><strong>Local da avaliação:</strong> ${esc(info('#patientPlace'))}</div><div><strong>Diagnóstico principal:</strong> ${esc(info('#patientDiagnosis'))}</div>
+  </div>`;
+}
+function info(id){return clean($(id)?.value||'')||'Não informado';}
+function professionalFooter(){return `<div class="pdf-footer"><strong>Profissional que aplicou o instrumento</strong><div class="pdf-meta" style="margin-top:8px"><div><strong>Nome:</strong> ${esc(info('#professionalName'))}</div><div><strong>Categoria profissional:</strong> ${esc(info('#professionalCategory'))}</div><div><strong>Número do conselho:</strong> ${esc(info('#professionalNumber'))}</div><div><strong>UF:</strong> ${esc(info('#professionalUF'))}</div></div><div class="signature">Assinatura e carimbo do profissional</div></div>`;}
+function iaecReplica(){
+  const s=iaecState();
+  let h=`<div class="pdf-head"><h2>Instrumento de Avaliação da Elegibilidade e Complexidade da Atenção Domiciliar (IAEC-AD)</h2><div>Versão Set 2023</div></div>${metaBlock()}`;
+  h+=section(
+    'INDICAÇÕES CLÍNICAS MAIS FREQUENTES PARA AD2/AD3',
+    rows('.iaec-ind'),
+    'Selecione uma ou mais das seguintes opções para definira principal indicação clínica do paciente.'
+  );
+  h+=`<div class="pdf-section"><div class="pdf-section-title">SISTEMA DE PONTUAÇÃO</div>`;
+  h+=`<div class="pdf-subtitle">INDICAÇÕES CLÍNICAS ESPECIAIS OU GATILHOS</div>
+      <div class="pdf-instruction">Selecione uma ou mais das opções a seguir.<br><strong>(A presença de qualquer uma delas já classifica o usuário como AD2 ou AD3, INDEPENDENTE DA PONTUAÇÃO FINAL).</strong></div>
+      ${rows('.iaec-score[data-trigger]')}`;
+  h+=`<div class="pdf-subtitle">USO DO SISTEMA DE SAÚDE</div>`;
+  h+=`<div class="pdf-instruction"><strong>Histórico de internação hospitalar nos últimos três meses.</strong></div>${rows('input[name="internacao"]')}`;
+  h+=`<div class="pdf-instruction"><strong>Frequência de procura por serviços de urgência nos últimos três meses (SAMU, UPA, Pronto-Socorro)</strong></div>${rows('input[name="urgencia"]')}`;
+  h+=`<div class="pdf-instruction"><strong>Tempo de permanência hospitalar nos últimos três meses. Considerar o maior período no caso de múltiplas internações prévias.</strong></div>${rows('input[name="permanencia"]')}`;
+  h+=`<div class="pdf-subtitle">VULNERABILIDADE SOCIAL</div>
+      <div class="pdf-instruction"><strong>Relação morador-cômodo: divida o número demoradores pelo número de cômodos, selecionando a opção apropriada.</strong></div>${rows('input[name="morador"]')}`;
+  h+=`<div class="pdf-subtitle">SUPORTE FAMILIAR/CUIDADO</div>
+      <div class="pdf-instruction"><strong>Identifique o suporte de cuidado, seja da família ou de cuidadores.</strong></div>${rows('input[name="suporte"]')}`;
+  h+=`<div class="pdf-subtitle">FUNCIONALIDADE</div>
+      <div class="pdf-instruction">Preencha este campo considerando a idade do paciente, para posterior identificação do grau de dependência, de acordo com sua faixa etária.</div>`;
+  h+=rows('input[name="faixa"]');
+  h+=`<div class="pdf-instruction"><strong>Para crianças de até 07 anos — Em relação ao desenvolvimento neuropsicomotor</strong></div>${rows('input[name="dnpm"]')}`;
+  h+=`<div class="pdf-instruction"><strong>Para crianças maiores de 07 anos, adultos e idosos — Capacidade para tomar banho</strong></div>${rows('input[name="banho"]')}`;
+  h+=`<div class="pdf-instruction"><strong>Capacidade para alimentar-se</strong></div>${rows('input[name="alimentar"]')}`;
+  h+=`<div class="pdf-instruction"><strong>Capacidade para locomover-se</strong></div>${rows('input[name="locomover"]')}`;
+  h+=`<div class="pdf-subtitle">POLIFARMÁCIA</div>
+      <div class="pdf-instruction"><strong>Uso de cinco ou mais medicações de uso contínuo, diariamente</strong></div>${rows('input[name="polifarmacia"]')}`;
+  h+=`</div>`;
+  h+=`<div class="pdf-result">
+    <div class="pdf-section-title">PONTUAÇÃO FINAL</div>
+    <div class="pdf-result-row"><strong>Pontuação</strong><strong>${s.total} pontos</strong></div>
+    <div class="pdf-result-row"><strong>Modalidade AD</strong><strong>${esc(s.finalClass)}</strong></div>
+    <div class="pdf-result-row"><span>AD1</span><span>Até 09 pontos</span></div>
+    <div class="pdf-result-row"><span>AD2</span><span>De 10 a 15 pontos</span></div>
+    <div class="pdf-result-row"><span>AD3</span><span>Maior ou igual a 16 pontos</span></div>
+    <div class="pdf-note">${esc(s.trigger)}<br>${esc(s.opinion)}</div>
+  </div>`;
+  return h;
+}
+function spictReplica(){
+  const s=spictState();
+  let h=`<div class="pdf-head"><h2>Supportive and Palliative Care Indicators Tool (SPICT-BR )</h2></div>${metaBlock()}`;
+  h+=section(
+    'Procure por indicadores gerais de saúde em deterioração.',
+    rows('.spict-general'),
+    '<strong>O SPICT é utilizado para ajudar a identificar pessoas cuja saúde está deteriorando. Avalie quanto às necessidades de suporte e cuidados paliativos não atendidas. Plano de cuidados.</strong>'
+  );
+  const groupOrder=['Câncer','Demência/ fragilidade','Doença neurológica','Doença cardiovascular','Doença respiratória','Doença renal','Doença hepática','Outras condições'];
+  let clinical=`<div class="pdf-section-title">Procure por indicadores clínicos de uma ou mais condições de saúde que limitam a vida.</div>`;
+  for(const group of groupOrder){
+    const inputs=$$('.spict-clinical').filter(x=>x.dataset.group===group);
+    clinical+=`<div class="pdf-subtitle">${esc(group)}</div>${inputs.map(rowForInput).join('')}`;
+  }
+  h+=`<div class="pdf-section">${clinical}</div>`;
+  h+=`<div class="pdf-section">
+    <div class="pdf-section-title">Revisar o cuidado atual e o plano de cuidados.</div>
+    <div class="pdf-instruction">
+      <ul style="margin:0;padding-left:18px">
+        <li>Revise o tratamento e os medicamentos atuais para garantir que a pessoa receba o cuidado otimizado; diminuir a polifarmácia.</li>
+        <li>Considere o encaminhamento para avaliação para uma equipe de Cuidados Paliativos se os sintomas ou problemas forem complexos e difíceis de manejar.</li>
+        <li>Elaborar um plano de cuidados para o momento atual e para o futuro com a pessoa e seus familiares/pessoas próximas. Apoiar os cuidadores.</li>
+        <li>Planejar com antecedência caso seja provável a perda da capacidade de tomada de decisão.</li>
+        <li>Registrar, compartilhar e revisar os planos de cuidados.</li>
+      </ul>
+    </div>
+  </div>`;
+  h+=`<div class="pdf-result">
+    <div class="pdf-section-title">Resultado da aplicação do SPICT-BR</div>
+    <div class="pdf-result-row"><strong>Indicadores gerais selecionados</strong><strong>${s.general.length}</strong></div>
+    <div class="pdf-result-row"><strong>Indicadores clínicos selecionados</strong><strong>${s.clinical.length}</strong></div>
+    <div class="pdf-note"><strong>Condições com indicadores selecionados:</strong> ${esc(s.groups.length?s.groups.join('; '):'Nenhuma condição clínica selecionada.')}<br><br>${esc(s.opinion)}</div>
+    <div class="pdf-note">O SPICT-BR apresentado não possui sistema de pontuação numérica. As contagens exibidas correspondem apenas ao número de indicadores selecionados e não constituem um escore.</div>
+  </div>`;
+  return h;
+}
+
+function ppsReplica(){
+  const s=ppsState();
+  let h=`<div class="pdf-head"><h2>A Escala de Desempenho em Cuidados Paliativos versão 2 (EDCP v2)</h2><div>TRADUÇÃO BRASILEIRA PARA A LÍNGUA PORTUGUESA</div><div style="font-size:11px;margin-top:3px">Portuguese Brazilian translation of Palliative Performance Scale (PPS version 2)</div></div>${metaBlock()}`;
+  h+=`<div class="pdf-section">
+    <div class="pdf-section-title">Palliative Performance Scale (PPS version 2)</div>
+    <div class="pdf-instruction">Os escores PPS são determinados lendo-se a tabela na horizontal, em cada linha, até encontrar o nível ou características que “melhor se adequam” ao paciente que está sendo avaliado. As colunas mais à esquerda são características mais “fortes” na determinação do escore. O PPS apresenta incrementos de 10% sempre.</div>
+    <div class="pdf-subtitle">Linhas do instrumento</div>
+    ${rows('.pps-choice')}
+  </div>`;
+  h+=`<div class="pdf-result">
+    <div class="pdf-section-title">Resultado da aplicação do PPS</div>
+    <div class="pdf-result-row"><strong>PPS</strong><strong>${s.score===null?'Não selecionado':s.score+'%'}</strong></div>
+    <div class="pdf-note">${esc(s.opinion)}</div>
+  </div>`;
+  return h;
+}
+
+function prepareReplica(kind){
+  const area=$('#printArea');
+  area.className='report-preview form-replica';
+  area.innerHTML=(kind==='iaec'?iaecReplica():(kind==='spict'?spictReplica():ppsReplica()))+professionalFooter();
+  return area.innerHTML;
+}
+function printReplica(kind){
+  prepareReplica(kind);
+  setTimeout(()=>window.print(),80);
+}
+function generatePDF(kind){
+  /* Browsers do not expose a secure cross-platform API to silently save a local PDF.
+     The print dialog is the native PDF generator and preserves the full form layout. */
+  prepareReplica(kind);
+  const oldTitle=document.title;
+  document.title=(kind==='iaec'?'IAEC-AD':(kind==='spict'?'SPICT-BR':'PPS'))+' - '+patient();
+  setTimeout(()=>{
+    window.print();
+    setTimeout(()=>{document.title=oldTitle;},500);
+  },80);
+}
+$('#previewIAEC').addEventListener('click',()=>prepareReplica('iaec'));
+$('#previewSPICT').addEventListener('click',()=>prepareReplica('spict'));
+$('#pdfIAEC').addEventListener('click',()=>generatePDF('iaec'));
+$('#pdfSPICT').addEventListener('click',()=>generatePDF('spict'));
+$('#printIAEC').addEventListener('click',()=>printReplica('iaec'));
+$('#printSPICT').addEventListener('click',()=>printReplica('spict'));
+
+
+$('#previewPPS').addEventListener('click',()=>prepareReplica('pps'));
+$('#pdfPPS').addEventListener('click',()=>generatePDF('pps'));
+$('#printPPS').addEventListener('click',()=>printReplica('pps'));
+$('#clearPPS').addEventListener('click',()=>{
+  $$('#ppsForm input').forEach(x=>x.checked=false);
+  updatePPS();prepareReplica('pps');
+});
+
+$('#clearIAEC').addEventListener('click',()=>{
+  $$('#iaecForm input').forEach(x=>x.checked=false);
+  setFunctionalMode();updateIAEC();prepareReplica('iaec');
+});
+$('#clearSPICT').addEventListener('click',()=>{
+  $$('#spictForm input').forEach(x=>x.checked=false);
+  updateSPICT();prepareReplica('spict');
+});
+
+setFunctionalMode();updateIAEC();updateSPICT();updatePPS();prepareReplica('iaec');
+})();
+</script>
+</body>
+</html>
